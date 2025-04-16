@@ -11,9 +11,11 @@
     "watch-build": "nodemon --watch src --watch public --ext js,jsx,ts,tsx,html,css --exec \"npm run build\""
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.4",
     "@vitejs/plugin-react": "^4.4.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "tailwindcss": "^4.1.4",
     "vite-plugin-static-copy": "^2.3.1"
   },
   "devDependencies": {
