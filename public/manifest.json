@@ -2,17 +2,28 @@
   "manifest_version": 3,
   "name": "IRCTC Auto-fill Extension",
   "version": "1.0.0",
-  "description": "Automatically fills form on IRCTC website",
+  "description": "Fills IRCTC form with saved data",
   "action": {
     "default_popup": "index.html",
     "default_icon": "irct.png"
   },
-  "permissions": ["scripting", "tabs"],
+  "permissions": ["tabs", "scripting", "storage"],
   "host_permissions": ["https://www.irctc.co.in/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
-      "matches": ["*://www.irctc.co.in/*", "https://www.irctc.co.in/nget/booking/psgninput/*","https://www.irctc.co.in/eticketing/loginHome.jsf","https://www.irctc.co.in/eticketing/trainbetweenstns.jsf*", "https://www.irctc.co.in/eticketing/AlternateAvailability.jsf*"],
-      "js": ["content.js"]
+      "matches": [
+        "*://www.irctc.co.in/*",
+        "https://www.irctc.co.in/nget/booking/psgninput/*",
+        "https://www.irctc.co.in/eticketing/loginHome.jsf",
+        "https://www.irctc.co.in/eticketing/trainbetweenstns.jsf*",
+        "https://www.irctc.co.in/eticketing/AlternateAvailability.jsf*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "type": "module"
     }
   ]
 }

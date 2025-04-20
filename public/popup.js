@@ -13,28 +13,35 @@ document.addEventListener("DOMContentLoaded", function () {
       age: ageInput,
       gender: genderInput,
     };
+    localStorage.setItem("passengerData", JSON.stringify(formData));
 
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      if (tabs[0]) {
-        chrome.tabs.sendMessage(
-          tabs[0].id,
-          {
-            action: "fillForm",
-            data: formData,
-          },
-          (response) => {
-            if (chrome.runtime.lastError) {
-              console.error("❌ Error sending message:", chrome.runtime.lastError.message);
-              alert("❌ Failed to connect with the IRCTC page. Open that tab first.");
-              return;
-            }
-            console.log("✅ Response from content script:", response);
-            alert("✅ Form filled successfully!");
-          }
-        );
-      } else {
-        alert("❌ No active tab found.");
-      }
-    });
+
+    //   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    //   if (tabs[0]) {
+    //     chrome.tabs.sendMessage(
+    //       tabs[0].id,
+    //       {
+    //         action: "fillForm",
+    //         data: formData,
+    //       },
+    //       (response) => {
+    //         if (chrome.runtime.lastError) {
+    //           console.error(
+    //             "❌ Error sending message:",
+    //             chrome.runtime.lastError.message
+    //           );
+    //           alert(
+    //             "❌ Failed to connect with the IRCTC page. Open that tab first."
+    //           );
+    //           return;
+    //         }
+    //         console.log("✅ Response from content script:", response);
+    //         alert("✅ Form filled successfully!");
+    //       }
+    //     );
+    //   } else {
+    //     alert("❌ No active tab found.");
+    //   }
+    // });
   });
 });

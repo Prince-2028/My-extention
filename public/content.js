@@ -1,40 +1,55 @@
 chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-    if (message.action === "fillForm") {
-      const data = message.data;
-  
-      try {
-        // Select form fields
-        const nameField = document.querySelector('p-autocomplete[formcontrolname="passengerName"] input');
-        const ageField = document.querySelector('input[placeholder="Age"]');
-        const genderField = document.querySelector('select[formcontrolname="passengerGender"]');
-        
-        // Fill Name field
-        if (nameField) {
-          nameField.value = data.name;
-          nameField.dispatchEvent(new Event("input", { bubbles: true }));
-        }
-        
-        // Fill Age field
-        if (ageField) {
-          ageField.value = data.age;
-          ageField.dispatchEvent(new Event("input", { bubbles: true }));
-        }
-        
-        // Fill Gender field
-        if (genderField) {
-          genderField.value = data.gender;
-          genderField.dispatchEvent(new Event("change", { bubbles: true }));
-        }
-  
-        sendResponse({ status: "success" });
-  
-      } catch (err) {
-        console.error("❌ Error in content.js:", err.message);
-        sendResponse({ status: "error", message: err.message });
+  if (message.data) {
+    console.log("Received data in content.js:", message);
+
+    const data = JSON.parse(message.data);
+    console.log(data);
+
+    try {
+      const nameField = document.querySelector(
+        'p-autocomplete[formcontrolname="passengerName"] input'
+      );
+      const ageField = document.querySelector(
+        'input[formcontrolname="passengerAge"]'
+      );
+      const genderField = document.querySelector(
+        'select[formcontrolname="passengerGender"]'
+      );
+
+      // Name
+      if (nameField) {
+        nameField.value = data.name;
+        nameField.dispatchEvent(new Event("input", { bubbles: true }));
+        console.log(" Name injected:", data.name);
       }
+
+      // Age
+      if (ageField) {
+        ageField.value = data.age;
+        ageField.dispatchEvent(new Event("input", { bubbles: true }));
+        console.log("Age injected:", data.age);
+      }
+
+      if (genderField) {
+        let genderCode = "";
+        if (data.gender.toLowerCase() === "male") genderCode = "M";
+        else if (data.gender.toLowerCase() === "female") genderCode = "F";
+        else if (data.gender.toLowerCase() === "transgender") genderCode = "T";
+
+        genderField.value = genderCode;
+        genderField.dispatchEvent(new Event("change", { bubbles: true }));
+        console.log(" Gender injected:", genderCode);
+      }
+
+      sendResponse({
+        status: "success",
+        message: "Data injected successfully",
+      });
+    } catch (error) {
+      console.error(" Error injecting data into IRCTC form:", error);
+      sendResponse({ status: "error", message: error.message });
     }
-  
-    // Important: Ensure the response is sent asynchronously
-    return true; 
-  });
-  
+  } else {
+    sendResponse({ status: "error", message: "No data received" });
+  }
+});
