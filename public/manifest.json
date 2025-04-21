@@ -1,11 +1,25 @@
 {
-    "manifest_version": 3,
-    "name": "React Chrome Extension",
-    "version": "1.0.0",
-    "description": "A simple React app as a Chrome extension",
-    "action": {
-      "default_popup": "index.html",
-      "default_icon":"irct.png"
-    },
-    "permissions": []
-  }
+  "manifest_version": 3,
+  "name": "IRCTC Auto-fill Extension",
+  "version": "1.0.0",
+  "description": "Fills IRCTC form with saved data",
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": "irct.png"
+  },
+  "permissions": ["tabs", "storage", "activeTab"],
+  "host_permissions": ["https://www.irctc.co.in/*"],
+  "content_scripts": [
+    {
+      "matches": [
+        "*://www.irctc.co.in/*",
+        "https://www.irctc.co.in/nget/booking/psgninput/*",
+        "https://www.irctc.co.in/eticketing/loginHome.jsf",
+        "https://www.irctc.co.in/eticketing/trainbetweenstns.jsf*",
+        "https://www.irctc.co.in/eticketing/AlternateAvailability.jsf*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

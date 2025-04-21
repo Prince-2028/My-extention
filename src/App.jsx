@@ -15,25 +15,25 @@ function App() {
   });
 
   useEffect(() => {
-    const saved = localStorage.getItem("passengerList");
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed)) {
-        parsed.forEach((p) => append(p));
-        remove(0);
+    chrome.storage.local.get("passengerList", (result) => {
+      const saved = result.passengerList;
+      if (saved && Array.isArray(saved)) {
+        saved.forEach((p) => append(p));
+        remove(0); // remove initial blank
       }
-    }
+    });
   }, []);
 
   const onSubmit = (data) => {
-    console.log(data.passengers);
-    localStorage.setItem("passengerList", JSON.stringify(data.passengers));
-    alert("Passenger data saved ");
+    const passengerList = data.passengers;
+    chrome.storage.local.set({ passengerList }, () => {
+      alert("Passenger data saved to chrome.storage.local!");
+    });
     reset();
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto rounded-lg ">
+    <div className="p-6 max-w-4xl mx-auto rounded-lg">
       <h2 className="text-2xl font-semibold text-center mb-6 text-gray-800">
         Passenger Details
       </h2>
@@ -56,72 +56,68 @@ function App() {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-        {fields.length > 0 &&
-          fields.map((field, index) => (
-            <div key={field.id} className="flex mb-5 items-center space-x-4 ">
-              <div className="flex-1">
-                <label className="block text-gray-700 text-sm">Name:</label>
-                <input
-                  {...register(`passengers.${index}.name`, { required: true })}
-                  placeholder="Enter name"
-                  className="w-full p-2 border rounded-md shadow-sm mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div className="flex-1">
-                <label className="block text-gray-700 text-sm">Age:</label>
-                <input
-                  type="number"
-                  {...register(`passengers.${index}.age`, { required: true })}
-                  placeholder="Enter age"
-                  className="w-full p-2 border rounded-md shadow-sm mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div className="flex-1">
-                <label className="block text-gray-700 text-sm">Gender:</label>
-                <select
-                  {...register(`passengers.${index}.gender`, {
-                    required: true,
-                  })}
-                  className="w-full p-2 border rounded-md shadow-sm mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Select Gender</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-
-              <div className="flex-1">
-                <label className="block text-gray-700 text-sm">
-                  Berth Preference:
-                </label>
-                <select
-                  {...register(`passengers.${index}.berth`, { required: true })}
-                  className="w-full p-2 border rounded-md shadow-sm mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  defaultValue="No Preference"
-                >
-                  <option value="Upper">Upper</option>
-                  <option value="Middle">Middle</option>
-                  <option value="Lower">Lower</option>
-                  <option value="Side Upper">Side Upper</option>
-                  <option value="Side Lower">Side Lower</option>
-                  <option value="No Preference">No Preference</option>
-                </select>
-              </div>
-
-              <div className="ml-2 mt-1">
-                <button
-                  type="button"
-                  onClick={() => remove(index)}
-                  className="text-red-500 hover:text-red-700 transition"
-                >
-                  <FaTrashAlt size={18} />
-                </button>
-              </div>
+        {fields.map((field, index) => (
+          <div key={field.id} className="flex mb-5 items-center space-x-4">
+            <div className="flex-1">
+              <label className="block text-gray-700 text-sm">Name:</label>
+              <input
+                {...register(`passengers.${index}.name`, { required: true })}
+                placeholder="Enter name"
+                className="w-full p-2 border rounded-md shadow-sm mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
             </div>
-          ))}
+
+            <div className="flex-1">
+              <label className="block text-gray-700 text-sm">Age:</label>
+              <input
+                type="number"
+                {...register(`passengers.${index}.age`, { required: true })}
+                placeholder="Enter age"
+                className="w-full p-2 border rounded-md shadow-sm mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="flex-1">
+              <label className="block text-gray-700 text-sm">Gender:</label>
+              <select
+                {...register(`passengers.${index}.gender`, { required: true })}
+                className="w-full p-2 border rounded-md shadow-sm mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div className="flex-1">
+              <label className="block text-gray-700 text-sm">
+                Berth Preference:
+              </label>
+              <select
+                {...register(`passengers.${index}.berth`, { required: true })}
+                className="w-full p-2 border rounded-md shadow-sm mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="Upper">Upper</option>
+                <option value="Middle">Middle</option>
+                <option value="Lower">Lower</option>
+                <option value="Side Upper">Side Upper</option>
+                <option value="Side Lower">Side Lower</option>
+                <option value="No Preference">No Preference</option>
+              </select>
+            </div>
+
+            <div className="ml-2 mt-1">
+              <button
+                type="button"
+                onClick={() => remove(index)}
+                className="text-red-500 hover:text-red-700 transition"
+              >
+                <FaTrashAlt size={18} />
+              </button>
+            </div>
+          </div>
+        ))}
 
         <div className="flex justify-end">
           <button
