@@ -19,7 +19,7 @@
         "https://www.irctc.co.in/eticketing/AlternateAvailability.jsf*"
       ],
       "js": ["content.js"],
-      "run_at": "document_idle"
+      "run_at": "document_start"
     }
   ]
 }
