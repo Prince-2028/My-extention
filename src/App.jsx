@@ -19,7 +19,7 @@ function App() {
       const saved = result.passengerList;
       if (saved && Array.isArray(saved)) {
         saved.forEach((p) => append(p));
-        remove(0); // remove initial blank
+        remove(0);
       }
     });
   }, []);
